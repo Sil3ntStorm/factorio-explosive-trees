@@ -165,12 +165,56 @@ local function onTick(event)
     end
 end
 
+local function registerFlames(flames)
+    for _, flame in pairs(flames) do
+        local info = {}
+        info['position'] = flame.position
+        info['name'] = flame.name
+        info['surface'] = flame.surface
+        info['id'] = script.register_on_entity_destroyed(flame)
+        global.silexptrees_flames[info.id] = info
+    end
+end
+
+local function onNthTick(event)
+    -- Horribly inefficient way of detecting burning Trees
+    if not global.silexptrees_flames then
+        global.silexptrees_flames = {}
+    end
+    for _, plr in pairs(game.players) do
+        if plr.connected then
+            local flames = plr.surface.find_entities_filtered{type = 'fire', position = plr.position, radius = 500}
+            registerFlames(flames)
+        end
+    end
+end
+
+local function checkBurningTrees(event)
+    local data = global.silexptrees_flames[event.registration_number]
+    local flames = data.surface.find_entities_filtered{type = 'fire', position = data.position, radius = 10}
+    registerFlames(flames)
+    if data.name == 'fire-flame' then
+        return
+    end
+    local trees = data.surface.find_entities_filtered{type = 'tree', position = data.position, radius = 1}
+    for _, tree in pairs(trees) do
+        local evt = {}
+        evt['entity'] = tree
+        evt['tick'] = game.tick
+        onEntityDamaged(evt)
+    end
+    global.silexptrees_flames[event.registration_number] = nil
+end
+
 script.on_init(function()
     on_tick_n.init()
     game.print('Explosive Trees initialized')
 end)
 
 script.on_event(defines.events.on_tick, onTick)
+
+script.on_nth_tick(30, onNthTick)
+script.on_event(defines.events.on_entity_destroyed, checkBurningTrees)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, onRTSettingChanged)
 
