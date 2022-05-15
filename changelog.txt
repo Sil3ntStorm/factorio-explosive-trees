@@ -1,4 +1,26 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.1157
+Date: 2022-05-15
+
+  Features:
+    - Added options to configure chance for each possible action to happen, including
+      disabling certain actions from happening at all.
+    - Added options to specify the maximum number of each action that can happen for
+      every tree that triggers.
+    - Added destroyer capsules
+
+  BugFixes:
+    - Fixed a potential desync issue in multiplayer which could happen after a nuke or
+      poison cloud got triggered, a new player joined and another tree explosion got
+      triggered within the first 200 ticks (or whatever was configured for nuke / poison
+      delays) of the player joining (#1)
+
+  Changes:
+    - Changed early game safety time to be specified in minutes instead of ticks (#3)
+    - Changed nuke and poison delay to be specified in seconds rather than ticks (#3)
+    - Changed a few descriptions to hopefully better explain a few settings (#2)
+
+---------------------------------------------------------------------------------------------------
 Version: 0.2.1157
 Date: 2022-04-15
 

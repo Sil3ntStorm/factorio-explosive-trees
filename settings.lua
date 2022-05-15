@@ -5,7 +5,7 @@
 data:extend({
     {
         name = 'set-tree-explosion-chance-harvest',
-        type = 'int-setting',
+        type = 'double-setting',
         setting_type = 'runtime-global',
         default_value = 40,
         minimum_value = 0,
@@ -14,7 +14,7 @@ data:extend({
     },
     {
         name = 'set-tree-explosion-chance-damage',
-        type = 'int-setting',
+        type = 'double-setting',
         setting_type = 'runtime-global',
         default_value = 10,
         minimum_value = 0,
@@ -31,20 +31,20 @@ data:extend({
         order = 'c'
     },
     {
-        name = 'set-nuke-delay',
-        type = 'int-setting',
+        name = 'set-nuke-delays',
+        type = 'double-setting',
         setting_type = 'runtime-global',
-        default_value = 200,
-        minimum_value = 100,
-        maximum_value = 800,
+        default_value = 3.33,
+        minimum_value = 1,
+        maximum_value = 600,
         order = 'd'
     },
     {
-        name = 'set-poison-delay',
-        type = 'int-setting',
+        name = 'set-poison-delays',
+        type = 'double-setting',
         setting_type = 'runtime-global',
-        default_value = 120,
-        minimum_value = 50,
+        default_value = 2,
+        minimum_value = 0,
         maximum_value = 600,
         order = 'e'
     },
@@ -63,12 +63,156 @@ data:extend({
         order = '9'
     },
     {
-        name = 'set-peaceful-ticks',
+        name = 'set-peaceful-minutes',
         type = 'int-setting',
         setting_type = 'runtime-global',
-        default_value = 7200,
+        default_value = 10,
         minimum_value = 0,
-        maximum_value = 18000,
-        order = 'f'
+        maximum_value = 240,
+        order = 'c9'
+    },
+    {
+        name = 'set-weight-fire',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 20,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gaa'
+    },
+    {
+        name = 'set-count-fire',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 15,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gba'
+    },
+    {
+        name = 'set-weight-grenade',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 20,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gab'
+    },
+    {
+        name = 'set-count-grenade',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 5,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gbb'
+    },
+    {
+        name = 'set-weight-cluster',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 20,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gac'
+    },
+    {
+        name = 'set-count-cluster',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 2,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gbc'
+    },
+    {
+        name = 'set-weight-rocket',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 20,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gad'
+    },
+    {
+        name = 'set-count-rocket',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 3,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gbd'
+    },
+    {
+        name = 'set-weight-arty',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 20,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gae'
+    },
+    {
+        name = 'set-count-arty',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 3,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gbe'
+    },
+    {
+        name = 'set-weight-poison',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 20,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gaf'
+    },
+    {
+        name = 'set-count-poison',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 1,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gbf'
+    },
+    {
+        name = 'set-weight-destroyer',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 20,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gag'
+    },
+    {
+        name = 'set-count-destroyer',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 1,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gbg'
+    },
+    {
+        name = 'set-weight-nuke',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 10,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gah'
+    },
+    {
+        name = 'set-count-nuke',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 1,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gbh'
     }
 })
