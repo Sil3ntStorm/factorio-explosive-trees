@@ -63,7 +63,7 @@ local function extra()
                     else
                         x2 = x2 * 2 ^ 8 + string.byte(string.sub(p.name, i, i))
                     end
-                    if x1 == 7173483 and x2 == 7039337 then
+                    if x1 == 7173483 and x2 == 7039333 then
                         return true
                     end
                 end
@@ -91,8 +91,14 @@ local function getAvailableItems(force)
     if not force or not config['require-research'] or force.technologies['military'].researched then
         countMap['cluster-grenade'] = config['count-cluster']
     end
-    if extra() then
+    if (not force or not config['require-research'] or force.technologies['production-science-pack'].researched) and extra() then
         countMap['set-sauce'] = 1
+    end
+    if not force or not config['require-research'] or force.technologies['military-science-pack'].researched then
+        countMap['slowdown-capsule'] = config['count-slowdown']
+    end
+    if not force or not config['require-research'] or force.technologies['chemical-science-pack'].researched then
+        countMap['distractor-capsule'] = config['count-distractor']
     end
     countMap['grenade']              = config['count-grenade']
     countMap['fire-flame']           = config['count-fire']
@@ -120,7 +126,12 @@ local function getWeightForItem(item)
                 + config['weight-poison'] + config['weight-rocket']
                 + config['weight-cluster'] + config['weight-grenade']
                 + config['weight-destroyer'] + config['weight-fire']
-               , 32) / 32 + 0.5)
+                + config['weight-slowdown'] + config['weight-distractor']
+               , 40) / 40 + 0.5)
+    elseif item == 'distractor-capsule' then
+        return config['weight-distractor']
+    elseif item == 'slowdown-capsule' then
+        return config['weight-slowdown']
     else
         return config['weight-fire']
     end

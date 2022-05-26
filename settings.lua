@@ -198,6 +198,42 @@ data:extend({
         order = 'gbg'
     },
     {
+        name = 'set-weight-slowdown',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 20,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gai'
+    },
+    {
+        name = 'set-count-slowdown',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 3,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gbi'
+    },
+    {
+        name = 'set-weight-distractor',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 20,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'gaj'
+    },
+    {
+        name = 'set-count-distractor',
+        type = 'int-setting',
+        setting_type = 'runtime-global',
+        default_value = 1,
+        minimum_value = 1,
+        maximum_value = 50,
+        order = 'gbj'
+    },
+    {
         name = 'set-weight-nuke',
         type = 'int-setting',
         setting_type = 'runtime-global',
