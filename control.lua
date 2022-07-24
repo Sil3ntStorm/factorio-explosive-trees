@@ -333,6 +333,9 @@ end
 
 local function checkBurningTrees(event)
     local data = global.silexptrees_flames[event.registration_number]
+    if not data or not data.surface or not data.position then
+        return
+    end
     local flames = data.surface.find_entities_filtered{type = 'fire', position = data.position, radius = 10}
     registerFlames(flames)
     if data.name == 'fire-flame' then
