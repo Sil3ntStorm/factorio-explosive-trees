@@ -56,6 +56,13 @@ data:extend({
         order = 'ca'
     },
     {
+        name = 'set-enable-fire-trigger',
+        type = 'bool-setting',
+        setting_type = 'runtime-global',
+        default_value = true,
+        order = 'caa'
+    },
+    {
         name = 'set-require-research',
         type = 'bool-setting',
         setting_type = 'runtime-global',

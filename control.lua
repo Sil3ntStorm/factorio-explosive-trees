@@ -41,16 +41,6 @@ local function farreachWarning()
     end
 end
 
-local function onRTSettingChanged(event)
-    if string.sub(event.setting, 1, 4) ~= 'set-' then
-        return
-    end
-    config[string.sub(event.setting, 5)] = settings.global[event.setting].value
-    if event.setting == 'set-peaceful-minutes' then
-        peacefulWarning()
-    end
-end
-
 local function extra()
     for _, p in pairs(game.connected_players) do
         if p.valid then
@@ -308,6 +298,9 @@ local function onTick(event)
 end
 
 local function registerFlames(flames)
+    if not config['enable-fire-trigger'] then
+        return
+    end
     for _, flame in pairs(flames) do
         local info = {}
         info['position'] = flame.position
@@ -319,6 +312,9 @@ local function registerFlames(flames)
 end
 
 local function onNthTick(event)
+    if not config['enable-fire-trigger'] then
+        return
+    end
     -- Horribly inefficient way of detecting burning Trees
     if not global.silexptrees_flames then
         global.silexptrees_flames = {}
@@ -332,6 +328,9 @@ local function onNthTick(event)
 end
 
 local function checkBurningTrees(event)
+    if not config['enable-fire-trigger'] then
+        return
+    end
     local data = global.silexptrees_flames[event.registration_number]
     if not data or not data.surface or not data.position then
         return
@@ -351,17 +350,41 @@ local function checkBurningTrees(event)
     global.silexptrees_flames[event.registration_number] = nil
 end
 
+local function register_conditional_events()
+    if config['enable-fire-trigger'] then
+        log('Fire Trigger enabled')
+        script.on_nth_tick(30, onNthTick)
+        script.on_event(defines.events.on_entity_destroyed, checkBurningTrees)
+    else
+        log('Fire Trigger disabled')
+        script.on_nth_tick(30, nil)
+        script.on_event(defines.events.on_entity_destroyed, nil)
+    end
+end
+
+local function onRTSettingChanged(event)
+    if string.sub(event.setting, 1, 4) ~= 'set-' then
+        return
+    end
+    config[string.sub(event.setting, 5)] = settings.global[event.setting].value
+    if event.setting == 'set-peaceful-minutes' then
+        peacefulWarning()
+    end
+    if event.setting == 'set-enable-fire-trigger' then
+        register_conditional_events()
+    end
+end
+
 script.on_init(function()
     on_tick_n.init()
     game.print('Explosive Trees initialized')
     peacefulWarning()
     farreachWarning()
+    register_conditional_events()
 end)
+script.on_load(register_conditional_events)
 
 script.on_event(defines.events.on_tick, onTick)
-
-script.on_nth_tick(30, onNthTick)
-script.on_event(defines.events.on_entity_destroyed, checkBurningTrees)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, onRTSettingChanged)
 script.on_configuration_changed(function()
