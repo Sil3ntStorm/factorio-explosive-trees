@@ -257,5 +257,23 @@ data:extend({
         minimum_value = 1,
         maximum_value = 50,
         order = 'gbh'
+    },
+    {
+        name = 'set-rock-explosion-chance-harvest',
+        type = 'double-setting',
+        setting_type = 'runtime-global',
+        default_value = 40,
+        minimum_value = 0,
+        maximum_value = 100,
+        order = 'bg'
+    },
+    {
+        name = 'set-rock-explosion-chance-damage',
+        type = 'double-setting',
+        setting_type = 'runtime-global',
+        default_value = 10,
+        minimum_value = 0,
+        maximum_value = 50,
+        order = 'bh'
     }
 })
