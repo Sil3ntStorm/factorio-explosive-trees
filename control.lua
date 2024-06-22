@@ -9,6 +9,7 @@ config['tasksPerTick'] = 10
 config['tasksExpireTicks'] = 30
 config['delay'] = 2
 config['extra-explosion-spawn-range'] = 8
+config['damage-entity-cooldown-ticks'] = 30
 
 for k, v in pairs(settings.global) do
     if string.sub(k, 1, 4) == 'set-' then
@@ -241,6 +242,9 @@ local function onEntityTriggered(event, option)
     if config[option] == 0 then
         return
     end
+    if not global.damage_entities_cooldown then
+        global.damage_entities_cooldown = {}
+    end
     local frc = game.forces['player']
     if event.force and event.force ~= 'enemy' then
         frc = event.force
@@ -269,6 +273,10 @@ local function onEntityTriggered(event, option)
     end
     local optVal = math.floor((config[option] * 1000) + 0.5)
     if math.random(1, 100000) <= optVal then
+        if global.damage_entities_cooldown[event.entity.unit_number] and game.tick < global.damage_entities_cooldown[event.entity.unit_number] then
+            return
+        end
+        global.damage_entities_cooldown[event.entity.unit_number] = game.tick + config['damage-entity-cooldown-ticks']
         scheduleExplosive(event.entity.surface, event.entity.position, frc, source)
     end
 end
@@ -334,6 +342,15 @@ local function registerFlames(flames)
 end
 
 local function onNthTick(event)
+    if global.damage_entities_cooldown then
+        local ng = {}
+        for unum, tick in pairs(global.damage_entities_cooldown) do
+            if game.tick <= tick then
+                ng[unum] = tick
+            end
+        end
+        global.damage_entities_cooldown = ng
+    end
     if not config['enable-fire-trigger'] then
         return
     end
@@ -373,13 +390,12 @@ local function checkBurningTrees(event)
 end
 
 local function register_conditional_events()
+    local do_nth_tick = config['enable-fire-trigger']
     if config['enable-fire-trigger'] then
         log('Fire Trigger enabled')
-        script.on_nth_tick(30, onNthTick)
         script.on_event(defines.events.on_entity_destroyed, checkBurningTrees)
     else
         log('Fire Trigger disabled')
-        script.on_nth_tick(30, nil)
         script.on_event(defines.events.on_entity_destroyed, nil)
     end
     local dmg_filter = {}
@@ -398,6 +414,7 @@ local function register_conditional_events()
         table.insert(dmg_filter, { filter = 'type', type = 'simple-entity' })
     end
     if config['vehicle-explosion-chance-damage'] > 0 then
+        do_nth_tick = true
         table.insert(dmg_filter, { filter = 'type', type = 'car' })
         table.insert(dmg_filter, { filter = 'type', type = 'locomotive' })
         table.insert(dmg_filter, { filter = 'type', type = 'cargo-wagon' })
@@ -406,9 +423,11 @@ local function register_conditional_events()
         table.insert(dmg_filter, { filter = 'type', type = 'spider-vehicle' })
     end
     if config['cbot-explosion-chance-damage'] > 0 then
+        do_nth_tick = true
         table.insert(dmg_filter, { filter = 'type', type = 'construction-robot' })
     end
     if config['lbot-explosion-chance-damage'] > 0 then
+        do_nth_tick = true
         table.insert(dmg_filter, { filter = 'type', type = 'logistic-robot' })
     end
     if #harv_filter > 0 then
@@ -422,6 +441,11 @@ local function register_conditional_events()
         script.on_event(defines.events.on_entity_damaged, onEntityDamaged, dmg_filter)
     else
         script.on_event(defines.events.on_entity_damaged, nil)
+    end
+    if do_nth_tick then
+        script.on_nth_tick(30, onNthTick)
+    else
+        script.on_nth_tick(30, nil)
     end
 end
 
