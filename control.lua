@@ -282,9 +282,17 @@ local function onEntityDeleted(event)
 end
 
 local function onEntityDamaged(event)
-    if event.entity and event.entity.valid and (string.match(event.entity.name, 'rock') or string.match(event.entity.name, 'meteor')) then
-        if event.entity.get_health_ratio() < 0.5 then
+    if not (event and event.entity and event.entity.valid) then
+        return
+    end
+    local chance = 1 - 2 * (event.entity.get_health_ratio() - 0.5)
+    if string.match(event.entity.name, 'rock') or string.match(event.entity.name, 'meteor') then
+        if math.random() <= chance then
             onEntityTriggered(event, 'rock-explosion-chance-damage')
+        end
+    elseif event.entity.type == 'car' or event.entity.type == 'spider-vehicle' or event.entity.type == 'locomotive' or event.entity.type == 'cargo-wagon' or event.entity.type == 'artillery-wagon' or event.entity.type == 'fluid-wagon' then
+        if math.random() <= chance then
+            onEntityTriggered(event, 'vehicle-explosion-chance-damage')
         end
     elseif event.entity.type == 'tree' then
         onEntityTriggered(event, 'tree-explosion-chance-damage')
@@ -370,22 +378,40 @@ local function register_conditional_events()
         script.on_nth_tick(30, nil)
         script.on_event(defines.events.on_entity_destroyed, nil)
     end
-    if config['tree-explosion-chance-harvest'] > 0 and config['rock-explosion-chance-harvest'] > 0 then
-        script.on_event(defines.events.on_pre_player_mined_item, onEntityDeleted , {{ filter = 'type', type = 'tree' }, { filter = 'type', type = 'simple-entity'}})
-        script.on_event(defines.events.on_robot_pre_mined, onEntityDeleted, {{ filter = 'type', type = 'tree'}, { filter = 'type', type = 'simple-entity'} })
-    elseif config['tree-explosion-chance-harvest'] > 0 then
-        script.on_event(defines.events.on_pre_player_mined_item, onEntityDeleted , {{ filter = 'type', type = 'tree' }})
-        script.on_event(defines.events.on_robot_pre_mined, onEntityDeleted, {{ filter = 'type', type = 'tree' }})
-    elseif config['rock-explosion-chance-harvest'] > 0 then
-        script.on_event(defines.events.on_pre_player_mined_item, onEntityDeleted , {{ filter = 'type', type = 'simple-entity' }})
-        script.on_event(defines.events.on_robot_pre_mined, onEntityDeleted, {{ filter = 'type', type = 'simple-entity' }})
+    local dmg_filter = {}
+    local harv_filter = {}
+    if config['tree-explosion-chance-harvest'] > 0 then
+        table.insert(harv_filter, { filter = 'type', type = 'tree' })
     end
-    if config['tree-explosion-chance-damage'] > 0 and config['rock-explosion-chance-damage'] > 0 then
-        script.on_event(defines.events.on_entity_damaged, onEntityDamaged, {{ filter = 'type', type = 'tree'}, { filter = 'final-health', comparison = '<', value = 16, mode = 'and' }, { filter = 'type', type = 'simple-entity'}})
-    elseif config['tree-explosion-chance-damage'] > 0 then
-        script.on_event(defines.events.on_entity_damaged, onEntityDamaged, {{ filter = 'type', type = 'tree'}, { filter = 'final-health', comparison = '<', value = 16, mode = 'and' }})
-    elseif config['rock-explosion-chance-damage'] > 0 then
-        script.on_event(defines.events.on_entity_damaged, onEntityDamaged, {{ filter = 'type', type = 'simple-entity'}})
+    if config['rock-explosion-chance-harvest'] > 0 then
+        table.insert(harv_filter, { filter = 'type', type = 'simple-entity' })
+    end
+    if config['tree-explosion-chance-damage'] > 0 then
+        table.insert(dmg_filter, { filter = 'type', type = 'tree' })
+        table.insert(dmg_filter, { filter = 'final-health', comparison = '<', value = 16, mode = 'and' })
+    end
+    if config['rock-explosion-chance-damage'] > 0 then
+        table.insert(dmg_filter, { filter = 'type', type = 'simple-entity' })
+    end
+    if config['vehicle-explosion-chance-damage'] > 0 then
+        table.insert(dmg_filter, { filter = 'type', type = 'car' })
+        table.insert(dmg_filter, { filter = 'type', type = 'locomotive' })
+        table.insert(dmg_filter, { filter = 'type', type = 'cargo-wagon' })
+        table.insert(dmg_filter, { filter = 'type', type = 'fluid-wagon' })
+        table.insert(dmg_filter, { filter = 'type', type = 'artillery-wagon' })
+        table.insert(dmg_filter, { filter = 'type', type = 'spider-vehicle' })
+    end
+    if #harv_filter > 0 then
+        script.on_event(defines.events.on_pre_player_mined_item, onEntityDeleted, harv_filter)
+        script.on_event(defines.events.on_robot_pre_mined, onEntityDeleted, harv_filter)
+    else
+        script.on_event(defines.events.on_robot_pre_mined, nil)
+        script.on_event(defines.events.on_pre_player_mined_item, nil)
+    end
+    if #dmg_filter > 0 then
+        script.on_event(defines.events.on_entity_damaged, onEntityDamaged, dmg_filter)
+    else
+        script.on_event(defines.events.on_entity_damaged, nil)
     end
 end
 
@@ -397,7 +423,7 @@ local function onRTSettingChanged(event)
     if event.setting == 'set-peaceful-minutes' then
         peacefulWarning()
     end
-    if event.setting == 'set-enable-fire-trigger' or event.setting == 'set-rock-explosion-chance-harvest' or event.setting == 'set-tree-explosion-chance-harvest' or event.setting == 'set-rock-explosion-chance-damage' or event.setting == 'set-tree-explosion-chance-damage' then
+    if event.setting == 'set-enable-fire-trigger' or event.setting == 'set-rock-explosion-chance-harvest' or event.setting == 'set-tree-explosion-chance-harvest' or event.setting == 'set-rock-explosion-chance-damage' or event.setting == 'set-tree-explosion-chance-damage' or event.setting == 'set-vehicle-explosion-chance-damage' then
         register_conditional_events()
     end
 end
