@@ -284,5 +284,23 @@ data:extend({
         minimum_value = 0,
         maximum_value = 50,
         order = 'bi'
+    },
+    {
+        name = 'set-cbot-explosion-chance-damage',
+        type = 'double-setting',
+        setting_type = 'runtime-global',
+        default_value = 10,
+        minimum_value = 0,
+        maximum_value = 50,
+        order = 'bk'
+    },
+    {
+        name = 'set-lbot-explosion-chance-damage',
+        type = 'double-setting',
+        setting_type = 'runtime-global',
+        default_value = 10,
+        minimum_value = 0,
+        maximum_value = 50,
+        order = 'bl'
     }
 })

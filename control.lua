@@ -294,6 +294,10 @@ local function onEntityDamaged(event)
         if math.random() <= chance then
             onEntityTriggered(event, 'vehicle-explosion-chance-damage')
         end
+    elseif event.entity.type == 'construction-robot' and math.random() <= chance then
+        onEntityTriggered(event, 'cbot-explosion-chance-damage')
+    elseif event.entity.type == 'logistic-robot' and math.random() <= chance then
+        onEntityTriggered(event, 'lbot-explosion-chance-damage')
     elseif event.entity.type == 'tree' then
         onEntityTriggered(event, 'tree-explosion-chance-damage')
     end
@@ -401,6 +405,12 @@ local function register_conditional_events()
         table.insert(dmg_filter, { filter = 'type', type = 'artillery-wagon' })
         table.insert(dmg_filter, { filter = 'type', type = 'spider-vehicle' })
     end
+    if config['cbot-explosion-chance-damage'] > 0 then
+        table.insert(dmg_filter, { filter = 'type', type = 'construction-robot' })
+    end
+    if config['lbot-explosion-chance-damage'] > 0 then
+        table.insert(dmg_filter, { filter = 'type', type = 'logistic-robot' })
+    end
     if #harv_filter > 0 then
         script.on_event(defines.events.on_pre_player_mined_item, onEntityDeleted, harv_filter)
         script.on_event(defines.events.on_robot_pre_mined, onEntityDeleted, harv_filter)
@@ -423,7 +433,7 @@ local function onRTSettingChanged(event)
     if event.setting == 'set-peaceful-minutes' then
         peacefulWarning()
     end
-    if event.setting == 'set-enable-fire-trigger' or event.setting == 'set-rock-explosion-chance-harvest' or event.setting == 'set-tree-explosion-chance-harvest' or event.setting == 'set-rock-explosion-chance-damage' or event.setting == 'set-tree-explosion-chance-damage' or event.setting == 'set-vehicle-explosion-chance-damage' then
+    if event.setting == 'set-enable-fire-trigger' or string.match(event.setting, 'explosion-chance') then
         register_conditional_events()
     end
 end
