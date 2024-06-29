@@ -66,7 +66,7 @@ end
 
 local function getAvailableItems(force)
     local countMap = {}
-    if config['enable-nuke'] and (not force or not config['require-research'] or force.technologies['uranium-processing'].researched) then
+    if not force or not config['require-research'] or force.technologies['uranium-processing'].researched then
         countMap['atomic-rocket']        = config['count-nuke']
     end
     if not force or not config['require-research'] or force.technologies['military-2'].researched then
@@ -245,6 +245,7 @@ local function onEntityTriggered(event, option)
     if not global.damage_entities_cooldown then
         global.damage_entities_cooldown = {}
     end
+    ---@type LuaForce
     local frc = game.forces['player']
     if event.force and event.force ~= 'enemy' then
         frc = event.force
@@ -269,14 +270,18 @@ local function onEntityTriggered(event, option)
         end
     end
     if source then
+        -- Reading always gives LuaForce, which is what the variable type is.
+        ---@diagnostic disable-next-line cast-local-type
         frc = source.force
     end
     local optVal = math.floor((config[option] * 1000) + 0.5)
     if math.random(1, 100000) <= optVal then
-        if global.damage_entities_cooldown[event.entity.unit_number] and game.tick < global.damage_entities_cooldown[event.entity.unit_number] then
-            return
+        if event.entity.unit_number then
+            if global.damage_entities_cooldown[event.entity.unit_number] and game.tick < global.damage_entities_cooldown[event.entity.unit_number] then
+                return
+            end
+            global.damage_entities_cooldown[event.entity.unit_number] = game.tick + config['damage-entity-cooldown-ticks']
         end
-        global.damage_entities_cooldown[event.entity.unit_number] = game.tick + config['damage-entity-cooldown-ticks']
         scheduleExplosive(event.entity.surface, event.entity.position, frc, source)
     end
 end

@@ -49,13 +49,6 @@ data:extend({
         order = 'e'
     },
     {
-        name = 'set-enable-nuke',
-        type = 'bool-setting',
-        setting_type = 'runtime-global',
-        default_value = true,
-        order = 'ca'
-    },
-    {
         name = 'set-enable-fire-trigger',
         type = 'bool-setting',
         setting_type = 'runtime-global',

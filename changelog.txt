@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.6.2
+Date: 2024-06-29
+
+  Bugfixes:
+    - Fixed unrecoverable error
+
+  Changes:
+    - Removed setting to disable nuclear explosions because it was made obsolete by the
+      weighted chance option for nukes.
+---------------------------------------------------------------------------------------------------
 Version: 0.6
 Date: 2024-06-22
 

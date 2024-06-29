@@ -143,7 +143,7 @@ local shock_proj = table.deepcopy(data.raw.projectile["atomic-bomb-wave-spawns-n
 shock_proj.name = "set-sauce-nuke-shock-spawn"
 shock_proj.action[1].action_delivery.target_effects[1].entity_name = shock.name
 
-local multi = 8
+local multi = 12
 local rocket = table.deepcopy(data.raw.projectile["atomic-rocket"])
 local effects = {}
 table.insert(effects, table.deepcopy(rocket.action.action_delivery.target_effects[1]))
