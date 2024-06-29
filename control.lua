@@ -235,7 +235,7 @@ local function onEntityTriggered(event, option)
     if event.tick < config['peaceful-minutes'] * 3600 then
         return
     end
-    if not (event.entity and event.entity.valid) then
+    if not (event.entity and event.entity.valid and event.entity.unit_number) then
         log('onEntityTriggered called with an invalid entity')
         return
     end
@@ -275,6 +275,12 @@ local function onEntityTriggered(event, option)
     if math.random(1, 100000) <= optVal then
         if global.damage_entities_cooldown[event.entity.unit_number] and game.tick < global.damage_entities_cooldown[event.entity.unit_number] then
             return
+        end
+        if not global.damage_entities_cooldown then
+            global.damage_entities_cooldown = {}
+        end
+        if not config['damage-entity-cooldown-ticks'] then
+            config['damage-entity-cooldown-ticks'] = 30
         end
         global.damage_entities_cooldown[event.entity.unit_number] = game.tick + config['damage-entity-cooldown-ticks']
         scheduleExplosive(event.entity.surface, event.entity.position, frc, source)
